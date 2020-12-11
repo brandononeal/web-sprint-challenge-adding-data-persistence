@@ -6,6 +6,11 @@ const Task = require("./model");
 router.post("/", (req, res) => {
   Task.add(req.body)
     .then((task) => {
+      if (task.completed == 0) {
+        task.completed = false;
+      } else if (task.completed == 1) {
+        task.completed = true;
+      }
       res.status(201).json(task);
     })
     .catch((err) => {
@@ -15,8 +20,15 @@ router.post("/", (req, res) => {
 
 router.get("/", (req, res) => {
   Task.getTasks()
-    .then((task) => {
-      res.json(task);
+    .then((tasks) => {
+      tasks.map((task) => {
+        if (task.completed == 0) {
+          task.completed = false;
+        } else if (task.completed == 1) {
+          task.completed = true;
+        }
+      });
+      res.json(tasks);
     })
     .catch((err) => {
       res.status(500).json(err.message);
